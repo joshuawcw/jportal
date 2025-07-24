@@ -4,13 +4,12 @@ set -e
 # --- Configuration (EDIT THIS SCRIPT ON YOUR HOST BEFORE UPLOADING TO GITHUB!) ---
 # This is the base URL where your modular scripts (01, 02, 03) are hosted.
 # REPLACE THIS with the RAW URL to the 'main' branch of your GitHub repository.
-GITHUB_RAW_URL_BASE="https://raw.githubusercontent.com/joshuawcw/jportal/main" # Example: https://raw.githubusercontent.com/YourUsername/jportal-deploy/main
+GITHUB_RAW_URL_BASE="https://YOUR_GITHUB_RAW_URL_BASE" # Example: https://raw.githubusercontent.com/YourUsername/jportal-deploy/main
 
 # Get VM_IP_ADDRESS from command line argument
 VM_IP_ADDRESS="$1"
 if [ -z "$VM_IP_ADDRESS" ]; then
-    echo "ERROR: VM_IP_ADDRESS not provided."
-    echo "Usage: curl -fsSL ${GITHUB_RAW_URL_BASE}/00-bootstrap.sh | bash -s -- <YOUR_VM_IP_ADDRESS>"
+    echo "ERROR: VM_IP_ADDRESS not provided. Usage: curl ... | bash -s -- <YOUR_VM_IP_ADDRESS>"
     exit 1
 fi
 
