@@ -6,8 +6,8 @@ set -e
 echo "--- Running Jportal.com - Modular Deployment Script 2/3 (Configure Services) ---"
 
 # Secrets passed from bootstrap script as environment variables
-# DB_PASSWORD - provided as env var
-# RADIUS_SHARED_SECRET - provided as env var
+# DB_PASSWORD
+# RADIUS_SHARED_SECRET
 
 # FreeRADIUS configuration paths
 FR_MODS_PATH="/etc/freeradius/3.0/mods-available"
