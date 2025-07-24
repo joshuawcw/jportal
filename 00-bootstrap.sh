@@ -4,7 +4,7 @@ set -e
 # --- Configuration (EDIT THIS SCRIPT ON YOUR HOST BEFORE UPLOADING TO GITHUB!) ---
 # This is the base URL where your modular scripts (01, 02, 03) are hosted.
 # REPLACE THIS with the RAW URL to the 'main' branch of your GitHub repository.
-GITHUB_RAW_URL_BASE="https://YOUR_GITHUB_RAW_URL_BASE" # Example: https://raw.githubusercontent.com/YourUsername/jportal-deploy/main
+GITHUB_RAW_URL_BASE="https://raw.githubusercontent.com/joshuawcw/jportal/main" # Example: https://raw.githubusercontent.com/YourUsername/jportal-deploy/main
 
 # Get VM_IP_ADDRESS from command line argument
 VM_IP_ADDRESS="$1"
