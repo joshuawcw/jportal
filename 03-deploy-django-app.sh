@@ -225,4 +225,79 @@ sed -i "/from django.urls import path/a from django.urls import include\nfrom dj
 sed -i "/urlpatterns = \[/a \    path('admin-portal/', include('admin_portal.urls')),\n    path('auth-mgmt/', include('auth_mgmt.urls')),\n    path('portal/', include('portal.urls'))," "$MAIN_URLS_FILE"
 cat <<EOF >> "$MAIN_URLS_FILE"
 
-if
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+EOF
+echo "Main urls.py adjusted."
+
+# Create basic urls.py and views.py for each app (now directly in project root)
+echo "Creating basic app URLs and Views..."
+for app in $DJANGO_APPS; do
+    APP_DIR="$app"
+    APP_URLS_FILE="${APP_DIR}/urls.py"
+    APP_VIEWS_FILE="${APP_DIR}/views.py"
+
+    # Ensure app directory exists in root
+    mkdir -p "$APP_DIR"
+    
+    cat <<EOF > "$APP_URLS_FILE"
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.index, name='index'), # Placeholder view
+]
+EOF
+
+    cat <<EOF > "$APP_VIEWS_FILE"
+from django.http import HttpResponse
+
+def index(request):
+    return HttpResponse("Hello from Jportal ${app}!")
+EOF
+done
+echo "Basic app URLs and Views created."
+
+
+echo "--- Step 6: Deploying Jportal.com with Docker Compose ---"
+# Create static and media directories that Docker will mount
+echo "Creating static and media directories..."
+mkdir -p static media
+
+# Run Django database migrations
+echo "Running Django database migrations..."
+docker-compose run --rm django python manage.py makemigrations
+docker-compose run --rm django python manage.py migrate
+
+# Collect Django static files
+echo "Collecting Django static files..."
+docker-compose run --rm django python manage.py collectstatic --noinput
+
+# Create Django Superuser
+echo "Creating Django Superuser. Follow the prompts..."
+docker-compose run --rm django python manage.py createsuperuser
+
+# Start all services
+echo "Starting Jportal.com services with Docker Compose in detached mode..."
+# No --build here as image is not built from this script anymore, it's a base image
+docker-compose up -d
+
+echo ""
+echo "█████████████████████████████████████████████████████████████"
+echo "██                                                         ██"
+echo "██    Jportal.com VM Deployment Complete!                  ██"
+echo "██                                                         ██"
+echo "█████████████████████████████████████████████████████████████"
+echo ""
+echo "You can now access your Jportal.com development environment:"
+echo "- **Django Admin:** http://${VM_IP_ADDRESS}/admin/"
+echo "- **Jportal Portal (placeholder):** http://${VM_IP_ADDRESS}/portal/"
+echo "- **Jportal Admin Portal (placeholder):** http://${VM_IP_ADDRESS}/admin-portal/"
+echo "- **Jportal Auth Management (placeholder):** http://${VM_IP_ADDRESS}/auth-mgmt/"
+echo ""
+echo "Remember your Django Superuser credentials and the passwords you set."
+echo "If you encounter any issues, ensure you've re-logged into the VM via SSH after adding yourself to the 'docker' group (if that was prompted)."
+echo "You can check service status with 'docker-compose ps' or 'sudo systemctl status freeradius'."
+echo "To stop services: 'docker-compose down' (from $PROJECT_DIR)"
+echo "To restart services: 'docker-compose restart' (from $PROJECT_DIR)"
