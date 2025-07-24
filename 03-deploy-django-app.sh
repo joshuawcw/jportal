@@ -71,7 +71,7 @@ RUN apt-get update && \
 
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
-
+COPY .env /app/.env
 # --- Copy Django project structure to /app directly ---
 COPY manage.py /app/manage.py
 COPY ${DJANGO_CORE_NAME} /app/${DJANGO_CORE_NAME} # Copy the core project
