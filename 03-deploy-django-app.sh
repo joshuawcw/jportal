@@ -61,15 +61,17 @@ echo "Creating Dockerfile..."
 cat <<EOF > Dockerfile
 FROM python:3.10-slim-bullseye
 WORKDIR /app
+
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     libpq-dev \
     gcc \
     python3-dev \
     && rm -rf /var/lib/apt/lists/*
+
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
-COPY .env /app/.env
+
 # --- Copy Django project structure to /app directly ---
 COPY manage.py /app/manage.py
 COPY ${DJANGO_CORE_NAME} /app/${DJANGO_CORE_NAME} # Copy the core project
@@ -135,7 +137,7 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - nginx # Django now depends on Nginx so Nginx can start first (if needed, though reversed usually)
+      - nginx
     command: ["sh", "-c", "python manage.py runserver 0.0.0.0:8000"]
 
   nginx:
